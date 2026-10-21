@@ -5,17 +5,30 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Приглашение Дианы</title>
     <style>
+      :root {
+        --items: 7;
+        --vpad: 16px; /* внешний padding body */
+        --container-pad-v: 24px; /* padding контейнера по вертикали */
+        --container-pad-h: 24px; /* padding контейнера по горизонтали */
+      }
+
       * {
         margin: 0;
         padding: 0;
         box-sizing: border-box;
       }
 
+      html,
+      body {
+        height: 100%;
+      }
+
       body {
         min-height: 100vh;
+        min-height: 100dvh;
         display: flex;
         justify-content: center;
-        align-items: center;
+        /* НЕ align-items: center — центрируем через margin:auto, чтобы не обрезало верх */
         background: linear-gradient(135deg, #fdfcfb 0%, #e2d1c3 100%);
         font-family:
           'Segoe UI',
@@ -23,8 +36,9 @@
           system-ui,
           -apple-system,
           sans-serif;
-        padding: 16px;
+        padding: var(--vpad);
         transition: background 0.3s ease;
+        -webkit-overflow-scrolling: touch;
       }
 
       .container {
@@ -32,22 +46,24 @@
         width: 100%;
         background: rgba(255, 255, 255, 0.85);
         backdrop-filter: blur(8px);
-        border-radius: 48px;
-        padding: 48px 32px;
+        border-radius: clamp(24px, 5vw, 48px);
+        padding: clamp(16px, 3vh, 48px) clamp(16px, 5vw, 32px);
         box-shadow:
           0 20px 40px rgba(0, 0, 0, 0.15),
           0 8px 20px rgba(0, 0, 0, 0.1);
         border: 1px solid rgba(255, 255, 255, 0.6);
         text-align: center;
         transition: all 0.25s ease;
+        margin: auto; /* центрирование по вертикали без обрезки */
       }
 
       h1 {
-        font-size: clamp(1.8rem, 6vw, 2.8rem);
+        /* Шрифт зависит и от ширины, и от высоты */
+        font-size: clamp(1.1rem, min(6vw, 4.2vh), 2.8rem);
         font-weight: 600;
         color: #2e3b2e;
-        margin-bottom: 40px;
-        line-height: 1.3;
+        margin-bottom: clamp(16px, 3.5vh, 40px);
+        line-height: 1.25;
         letter-spacing: -0.02em;
         text-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
       }
@@ -56,13 +72,13 @@
         display: flex;
         flex-wrap: wrap;
         justify-content: center;
-        gap: 24px;
+        gap: clamp(10px, 2.5vh, 24px);
       }
 
       .btn {
         flex: 1 1 200px;
-        padding: 20px 28px;
-        font-size: clamp(1.1rem, 4vw, 1.5rem);
+        padding: clamp(12px, 2.2vh, 20px) clamp(18px, 4vw, 28px);
+        font-size: clamp(0.9rem, min(4.5vw, 3vh), 1.5rem);
         font-weight: 600;
         border: none;
         border-radius: 60px;
@@ -77,6 +93,7 @@
         white-space: nowrap;
         border: 1px solid rgba(255, 255, 255, 0.3);
         text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+        touch-action: manipulation;
       }
 
       .btn:hover {
@@ -103,59 +120,36 @@
         }
       }
 
-      /* Адаптив для узких экранов */
-      @media (max-width: 500px) {
-        .container {
-          padding: 32px 20px;
-          border-radius: 36px;
-        }
-
-        .btn {
-          padding: 16px 20px;
-          flex: 1 1 100%;
-          white-space: normal;
-          font-size: 1.3rem;
-        }
-
-        .buttons {
-          gap: 16px;
-        }
-      }
-
-      /* чтобы кнопки точно были зелёные — уже #2e7d32, но на всякий случай */
-      .btn {
-        background-color: #2e7d32; /* зелёный */
-      }
-
       #replacementView {
+        display: none;
         flex-direction: column;
         width: 100%;
         animation: fadeIn 0.3s ease;
       }
 
-      #replacementView > div:last-child {
-        width: 50%;
-        margin: 0 auto;
-        text-align: left;
-      }
-
       #replacementView span {
-        display: inline-block;
-        font-size: clamp(1.6rem, 7vw, 2.6rem);
+        /* Вертикальный бюджет строки */
+        --row-h: calc((100dvh - 2 * var(--vpad) - 2 * var(--container-pad-v)) / var(--items));
+        /* Горизонтальный бюджет строки (вся доступная ширина контейнера) */
+        --row-w: calc(100vw - 2 * var(--vpad) - 2 * var(--container-pad-h));
+
+        display: block;
+        font-size: clamp(0.75rem, min(calc(var(--row-h) * 0.34), calc(var(--row-w) * 0.1)), 2.2rem);
         font-weight: 600;
         color: #1e2b1e;
-        padding: 20px 24px;
-        margin: 12px 0;
+        padding: calc(var(--row-h) * 0.1) clamp(10px, 2.5vw, 24px);
+        margin: calc(var(--row-h) * 0.08) 0;
         background: rgba(255, 255, 255, 0.7);
-        border-radius: 36px;
+        border-radius: clamp(14px, 3.5vw, 36px);
         box-shadow: 0 8px 16px rgba(0, 0, 0, 0.06);
-        border-left: 12px solid #2e7d32;
-        line-height: 1.2;
+        border-left: clamp(5px, 1.2vw, 12px) solid #2e7d32;
+        line-height: 1.15;
         width: 100%;
-        box-sizing: border-box;
         text-align: left;
         backdrop-filter: blur(4px);
         transition: transform 0.15s ease;
+        overflow-wrap: break-word;
+        hyphens: auto;
       }
 
       #replacementView span:hover {
@@ -164,14 +158,14 @@
       }
 
       @media (max-width: 500px) {
-        #replacementView > div:last-child {
-          width: 100%;
+        .container {
+          padding: clamp(12px, 2.5vh, 24px) clamp(12px, 4vw, 20px);
+          border-radius: 24px;
         }
 
-        #replacementView span {
-          font-size: 1.5rem;
-          padding: 14px 18px;
-          border-left-width: 8px;
+        .btn {
+          flex: 1 1 100%;
+          white-space: normal;
         }
       }
     </style>
@@ -205,17 +199,21 @@
       const btnYes = document.getElementById('btnYes')
       const btnSure = document.getElementById('btnSure')
 
-      // Функция замены интерфейса
+      // Количество пунктов → CSS-переменная --items.
+      // Именно от неё зависит размер шрифта в списке.
+      function syncItemCount() {
+        const items = replacementView.querySelectorAll('span').length
+        document.documentElement.style.setProperty('--items', Math.max(items, 1))
+      }
+      syncItemCount()
+
       function replaceInterface() {
-        // Скрываем исходный блок
         initialView.style.display = 'none'
-        // Показываем блок с нумерованным списком
         replacementView.style.display = 'flex'
-        // Меняем фон body для лёгкого эффекта (опционально)
         document.body.style.background = 'linear-gradient(135deg, #e8f5e9 0%, #c8e6c9 100%)'
+        syncItemCount() // на случай динамических изменений
       }
 
-      // Навешиваем обработчики на обе кнопки
       btnYes.addEventListener('click', replaceInterface)
       btnSure.addEventListener('click', replaceInterface)
     </script>
